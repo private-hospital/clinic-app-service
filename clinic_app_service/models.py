@@ -32,19 +32,6 @@ APPOINTMENT_STATUS_CHOICES = (
     ('done', 'Завершений'),
 )
 
-APPOINTMENT_TIME_CHOICES = (
-    ('8:00', '8:00 - 8:30'),
-    ('8:30', '8:30 - 9:00'),
-    ('9:00', '9:00 - 9:30'),
-    ('9:30', '9:30 - 9:30'),
-    ('10:00', '10:00 - 10:30'),
-    ('10:30', '10:30 - 11:00'),
-    ('11:00', '11:00 - 11:30'),
-    ('11:30', '11:30 - 12:00'),
-    ('12:00', '12:00 - 12:30'),
-    ('12:30', '12:30 - 13:00'),
-    ('13:00', '13:00 - 13:30'),
-)
 
 class Patient(models.Model):
     first_name = models.CharField("Ім'я", max_length=255, blank=False)
@@ -59,12 +46,14 @@ class Patient(models.Model):
     def __str__(self):
         return f"{self.last_name} {self.first_name}"
 
+
 class Service(models.Model):
     service_name = models.CharField("Назва послуги", max_length=100, unique=True)
     is_service_archived = models.BooleanField("Архівовано", blank=False, default=False)
 
     def __str__(self):
         return self.service_name
+
 
 class MedicalRecord(models.Model):
     RECORD_TYPE_CHOICES = (
@@ -99,25 +88,23 @@ class MedicalRecord(models.Model):
                 name='check_analysis_pdf_links'
             ),
         ]
-    # def save(self, *args, **kwargs):
-    #     if self.record_type == 'referral' and not self.pk:  # Перевіряємо лише при створенні
-    #         super().save(*args, **kwargs)  # Зберігаємо, щоб можна було додати ManyToMany
-    #         if not self.services.exists():
-    #             return  # Якщо немає послуг, не зберігаємо
-    #     super().save(*args, **kwargs)
+
     def __str__(self):
-        services_names = ", ".join(service.name for service in self.services.all())
+        services_names = ", ".join(service.service_name for service in self.services.all())
         return f" {self.record_type} (Пацієнт: {self.patient}) {services_names}"
 
 
 class Invoice(models.Model):
     discount_percent = models.IntegerField("Знижка", blank=True, null=True)
-    subtotal = models.DecimalField("Сума без знижки", max_digits=12, decimal_places=2, blank=False)
-    total = models.DecimalField("Сума зі знижкою", max_digits=12, decimal_places=2, blank=False)
+    subtotal = models.DecimalField("Сума без знижки", max_digits=12, decimal_places=2,
+                                   blank=False, default=0.01, validators=[MinValueValidator(0.01)])
+    total = models.DecimalField("Сума зі знижкою", max_digits=12, decimal_places=2,
+                                blank=False, default=0.01, validators=[MinValueValidator(0.01)])
     paid_date = models.DateTimeField("Дата оплати", blank=False, default=timezone.now)
 
     def __str__(self):
         return f"Invoice {self.pk}"
+
 
 class User(models.Model):
     first_name = models.CharField("Ім'я", max_length=255, blank=False)
@@ -137,72 +124,42 @@ class User(models.Model):
             self.services.clear()
 
     def __str__(self):
-        return f"{self.last_name} {self.first_name} {self.middle_name}"
+        return f"{self.last_name} {self.first_name}"
+
 
 class PriceList(models.Model):
-
     name = models.CharField("Назва прайс-листу", max_length=255, blank=False)
-    status = models.CharField("Стан", max_length=8, choices=PRICE_LIST_STATUS_CHOICES, default='Неактивний', blank=False)
+    status = models.CharField("Стан", max_length=15, choices=PRICE_LIST_STATUS_CHOICES,
+                              default='Неактивний', blank=False)
     is_archived = models.BooleanField("Є архівованим", blank=False, default=False)
-    archive_reason = models.TextField("Причина архівування", blank=True)
+    archive_reason = models.TextField("Причина архівування", max_length=255, blank=True)
 
     def __str__(self):
         return f"Прайс-лист {self.pk} "
 
+
 class PriceListEntry(models.Model):
-    price_list = models.ForeignKey(
-        PriceList,
-        on_delete=models.CASCADE,
-        related_name='entries'
-    )
-    service = models.ForeignKey(
-        Service,
-        on_delete=models.CASCADE,
-        related_name='price_entries'
-    )
+    price_list = models.ForeignKey(PriceList, on_delete=models.CASCADE, related_name='entries')
+    service = models.ForeignKey(Service, on_delete=models.CASCADE, related_name='price_entries')
     price = models.DecimalField("Вартість", max_digits=12, decimal_places=2,
                                 default=0.01, blank=False, validators=[MinValueValidator(0.01)])
 
     def __str__(self):
         return f"Записи прайс-листа {self.pk}"
 
-class Appointment(models.Model):
-    patient = models.ForeignKey(
-        Patient,
-        on_delete=models.CASCADE,
-        related_name='appointments',
-        blank=False
-    )
-    doctor = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        related_name='appointments',
-        limit_choices_to={'user_type': 'doctor'},
-        blank=False
-    )
-    service = models.ForeignKey(
-        Service,
-        on_delete=models.CASCADE,
-        related_name='appointments',
-        blank=False
-    )
-    invoice = models.ForeignKey(
-        Invoice,
-        on_delete=models.CASCADE,
-        related_name='appointments',
-        blank=False
-    )
 
-    execution_status = models.CharField(
-        "Стан виконання",
-        max_length=15,
-        choices=APPOINTMENT_STATUS_CHOICES,
-        default='Заплановано',
-        blank=False
-    )
+class Appointment(models.Model):
+    patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='appointments', blank=False)
+    doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments',
+                               limit_choices_to={'user_type': 'doctor'}, blank=False)
+    price_list_entry = models.ForeignKey(PriceListEntry, on_delete=models.CASCADE,
+                                         related_name='appointments', blank=False)
+    invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='appointments', blank=False)
+
+    execution_status = models.CharField("Стан виконання", max_length=15, choices=APPOINTMENT_STATUS_CHOICES,
+                                        default='Заплановано', blank=False)
     appointment_date = models.DateTimeField("Дата проведення", blank=True, null=True)
     completion_date = models.DateTimeField("Дата виконання", blank=True, null=True)
 
     def __str__(self):
-        return (f"Прийом #{self.pk} | Пацієнт: {self.patient} | "
-                f"Лікар: {self.doctor} | Послуга: {self.service.name}")
+        return f"Прийом {self.pk}"
