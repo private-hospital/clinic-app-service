@@ -7,7 +7,6 @@ class MedicalRecordForm(forms.ModelForm):
         model = MedicalRecord
         fields = ['patient', 'record_type', 'services', 'pdf_links', 'services', 'doctor_conclusion', 'created_at']
         widgets = {
-            # Замість стандартного <select multiple> буде набір чекбоксів
             'services': CheckboxSelectMultiple(),
         }
 
