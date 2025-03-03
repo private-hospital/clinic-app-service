@@ -22,7 +22,18 @@ jobs:
       - name: Login to Amazon ECR
         uses: aws-actions/amazon-ecr-login@v1
 
-      - name: Build, tag, and push Docker image to ECR
+      - name: Build, tag, and push nginx image to ECR
+        env:
+          ECR_REPOSITORY: clinic-app-nginx
+          IMAGE_TAG: prod.latest
+          AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+          AWS_REGION: eu-central-1
+        run: |
+          docker build -f nginx.Dockerfile -t $ECR_REPOSITORY:$IMAGE_TAG .
+          docker tag $ECR_REPOSITORY:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+          docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Build, tag, and push service image to ECR
         env:
           ECR_REPOSITORY: clinic-app-service
           IMAGE_TAG: prod.latest
