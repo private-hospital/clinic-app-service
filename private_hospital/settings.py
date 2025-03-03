@@ -77,12 +77,6 @@ WSGI_APPLICATION = 'private_hospital.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
-print(f"database name - {os.getenv('DATABASE_NAME')}")
-print(f"database name - {os.getenv('DATABASE_ENGINE')}")
-print(f"database name - {os.getenv('DATABASE_USERNAME')}")
-print(f"database name - {os.getenv('DATABASE_PASSWORD')}")
-print(f"database name - {os.getenv('DATABASE_HOST')}")
-print(f"database name - {os.getenv('DATABASE_PORT')}")
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.{}'.format(
