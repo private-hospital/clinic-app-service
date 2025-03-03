@@ -37,6 +37,6 @@ jobs:
       - name: Force new deployment on ECS
         env:
           CLUSTER_NAME: prod-fargate-cluster
-          SERVICE_NAME: clinic-app-service
+          SERVICE_NAME: clinic-app-fargate-service
         run: |
           aws ecs update-service --cluster $CLUSTER_NAME --service $SERVICE_NAME --force-new-deployment
