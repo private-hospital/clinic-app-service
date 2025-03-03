@@ -49,12 +49,12 @@ APPOINTMENT_TIME_CHOICES = (
 class Patient(models.Model):
     first_name = models.CharField("Ім'я", max_length=255, blank=False)
     last_name = models.CharField("Прізвище", max_length=255, blank=False)
-    middle_name = models.CharField("По батькові", max_length=255, blank=True, null=True, default='')
+    middle_name = models.CharField("По батькові", max_length=255, blank=True, default='')
     phone_number = models.CharField("Номер телефону", max_length=15, blank=False, unique=True)
     email = models.EmailField("Електронна пошта", max_length=255, blank=False, unique=True)
     birth_date = models.DateField("Дата народження", blank=False)
     gender = models.CharField("Стать", max_length=8, choices=SEX_CHOICES, blank=False)
-    benefit_group = models.CharField("Пільгова група", max_length=50, choices=BENEFIT_GROUP_CHOICES, blank=True, null=True)
+    benefit_group = models.CharField("Пільгова група", max_length=50, choices=BENEFIT_GROUP_CHOICES, blank=True)
 
     def __str__(self):
         return f"{self.last_name} {self.first_name}"
@@ -76,10 +76,10 @@ class MedicalRecord(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='medical_records')
     record_type = models.CharField("Тип запису", max_length=255, choices=RECORD_TYPE_CHOICES, null=False)
 
-    pdf_links = models.CharField("Посилання на PDF-файли", max_length=255, blank=True, null=True)
+    pdf_links = models.CharField("Посилання на PDF-файли", max_length=255, blank=True)
     services = models.ManyToManyField(Service, verbose_name="Необхідні обстеження",
                                       related_name='medical_records', blank=False)
-    doctor_conclusion = models.CharField("Висновок лікаря", max_length=255, blank=True, null=True)
+    doctor_conclusion = models.CharField("Висновок лікаря", max_length=255, blank=True)
 
     created_at = models.DateTimeField("Дата створення", blank=False, default=timezone.now)
 
@@ -122,7 +122,7 @@ class Invoice(models.Model):
 class User(models.Model):
     first_name = models.CharField("Ім'я", max_length=255, blank=False)
     last_name = models.CharField("Прізвище", max_length=255, blank=False)
-    middle_name = models.CharField("По батькові", max_length=255, blank=True, null=True, default='')
+    middle_name = models.CharField("По батькові", max_length=255, blank=True, default='')
     email = models.EmailField("Електронна пошта", max_length=255, blank=False, unique=True)
     user_type = models.CharField("Тип користувача", max_length=255, choices=USER_TYPE_CHOICES, blank=False)
     services = models.ManyToManyField(Service, verbose_name="Послуги",
@@ -144,7 +144,7 @@ class PriceList(models.Model):
     name = models.CharField("Назва прайс-листу", max_length=255, blank=False)
     status = models.CharField("Стан", max_length=8, choices=PRICE_LIST_STATUS_CHOICES, default='Неактивний', blank=False)
     is_archived = models.BooleanField("Є архівованим", blank=False, default=False)
-    archive_reason = models.TextField("Причина архівування", blank=True, null=True)
+    archive_reason = models.TextField("Причина архівування", blank=Trueg)
 
     def __str__(self):
         return f"Прайс-лист {self.pk} "
