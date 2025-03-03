@@ -17,8 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from clinic_app_service import views
+from private_hospital.settings import API_PUB
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
+    path(f'{API_PUB}/health', views.health_check, name='service health')
 ]

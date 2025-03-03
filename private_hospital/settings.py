@@ -25,10 +25,11 @@ load_dotenv()
 SECRET_KEY = os.getenv('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = bool(os.getenv("DEBUG", default=0))
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "http://localhost:8000").split(",")
+print(f"CSRF_ORIGINS - {CSRF_TRUSTED_ORIGINS}")
 
 # Application definition
 
@@ -78,8 +79,14 @@ WSGI_APPLICATION = 'private_hospital.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.{}'.format(
+            os.getenv("DATABASE_ENGINE")
+        ),
+        'NAME': os.getenv("DATABASE_NAME"),
+        'USER': os.getenv("DATABASE_USERNAME"),
+        'PASSWORD': os.getenv("DATABASE_PASSWORD"),
+        'HOST': os.getenv("DATABASE_HOST"),
+        'PORT': os.getenv("DATABASE_PORT"),
     }
 }
 
@@ -119,8 +126,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+API_BASE = 'api/ph/v0'
+API_PUB = f'{API_BASE}/public'
+API_DOC = f'{API_BASE}/doctor'
+API_REG = f'{API_BASE}/registrar'
+API_OWN = f'{API_BASE}/owner'

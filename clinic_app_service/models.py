@@ -144,7 +144,7 @@ class PriceList(models.Model):
     name = models.CharField("Назва прайс-листу", max_length=255, blank=False)
     status = models.CharField("Стан", max_length=8, choices=PRICE_LIST_STATUS_CHOICES, default='Неактивний', blank=False)
     is_archived = models.BooleanField("Є архівованим", blank=False, default=False)
-    archive_reason = models.TextField("Причина архівування", blank=Trueg)
+    archive_reason = models.TextField("Причина архівування", blank=True)
 
     def __str__(self):
         return f"Прайс-лист {self.pk} "
