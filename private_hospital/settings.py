@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
-
+from mmap import ALLOCATIONGRANULARITY
 from pathlib import Path
 import os
 from dotenv import load_dotenv
@@ -27,6 +27,8 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool(os.getenv("DEBUG", default=0))
 
+ALLOWED_HOSTS=['*']
+CSRF_TRUSTED_ORIGINS=['*']
 # ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
 # CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "http://localhost:8000").split(",")
 # print(f"CSRF_ORIGINS - {CSRF_TRUSTED_ORIGINS}")
