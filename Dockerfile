@@ -30,7 +30,7 @@ ENV PYTHONUNBUFFERED=1
 
 USER appuser
 
-EXPOSE 8000
+EXPOSE 80
 
 RUN chmod +x /app/entrypoint.prod.sh
 
