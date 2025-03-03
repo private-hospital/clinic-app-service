@@ -39,7 +39,7 @@ jobs:
 
       - name: Upload Static Files to S3
         run: |
-          aws s3 sync ./staticfiles/ s3://private-hospital-public/static/ --acl public-read
+          aws s3 sync ./staticfiles/ s3://private-hospital-public/static/
 
       - name: Build, tag, and push service image to ECR
         env:
