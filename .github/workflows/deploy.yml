@@ -34,11 +34,12 @@ jobs:
 
       - name: Collect Django Static Files
         run: |
+          cp .env.prod .env
           python manage.py collectstatic --noinput
 
       - name: Upload Static Files to S3
         run: |
-          aws s3 sync ./static/ s3://private-hospital-public/static/ --acl public-read
+          aws s3 sync ./staticfiles/ s3://private-hospital-public/static/ --acl public-read
 
       - name: Build, tag, and push service image to ECR
         env:
