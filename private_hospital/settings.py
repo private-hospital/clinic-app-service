@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+from datetime import timedelta
 from mmap import ALLOCATIONGRANULARITY
 from pathlib import Path
 import os
@@ -32,6 +33,8 @@ CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "http://localhos
 print(f"ALLOWED_HOSTS - {ALLOWED_HOSTS}")
 print(f"CSRF_ORIGINS - {CSRF_TRUSTED_ORIGINS}")
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -41,9 +44,28 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'clinic_app_service',
+    'rest_framework',
+    'rest_framework_simplejwt',
+    'corsheaders',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
+}
+
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',

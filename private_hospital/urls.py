@@ -18,9 +18,14 @@ from django.contrib import admin
 from django.urls import path
 from clinic_app_service import views
 from private_hospital.settings import API_PUB
+from rest_framework_simplejwt import views as jwt_views
+from clinic_app_service.views import LoginView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
-    path(f'{API_PUB}/health', views.health_check, name='service health')
+    path(f'{API_PUB}/health', views.health_check, name='service health'),
+    path('api/token/', jwt_views.TokenObtainPairView.as_view(),  name='token_obtain_pair'),
+    path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
+    path('login/', LoginView.as_view(), name='login'),
 ]

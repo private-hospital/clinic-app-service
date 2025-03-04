@@ -1,3 +1,4 @@
+import bcrypt
 from django.utils import timezone
 from django.db import models
 from django.db.models import Q, CheckConstraint
@@ -40,7 +41,7 @@ class Patient(models.Model):
     phone_number = models.CharField("Номер телефону", max_length=15, blank=False, unique=True)
     email = models.EmailField("Електронна пошта", max_length=255, blank=False, unique=True)
     birth_date = models.DateField("Дата народження", blank=False)
-    gender = models.CharField("Стать", max_length=8, choices=SEX_CHOICES, blank=False)
+    gender = models.CharField("Стать", max_length=8, choices=SEX_CHOICES, blank=False, default='Чоловіча')
     benefit_group = models.CharField("Пільгова група", max_length=50, choices=BENEFIT_GROUP_CHOICES, blank=True)
 
     def __str__(self):
@@ -123,6 +124,12 @@ class User(models.Model):
         if self.user_type != 'doctor':
             self.services.clear()
 
+    def set_password(self, raw_password):
+        salt = bcrypt.gensalt()
+        self.password_hash = bcrypt.hashpw(raw_password.encode(), salt).decode()
+
+    def check_password(self, raw_password):
+        return bcrypt.checkpw(raw_password.encode(), self.password_hash.encode())
     def __str__(self):
         return f"{self.last_name} {self.first_name}"
 
