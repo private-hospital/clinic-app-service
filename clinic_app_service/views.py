@@ -1,5 +1,8 @@
 # views.py
+from math import ceil
+
 import bcrypt
+from django.db.models.query import QuerySet
 from django.shortcuts import render, redirect
 from .models import MedicalRecord, Patient
 from .forms import MedicalRecordForm
@@ -84,9 +87,28 @@ class LoginView(APIView):
 
 class PatientListView(APIView):
     def get(self, request):
-        patients = Patient.objects.all()
-        serializer = PatientSerializer(patients, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        page = int(request.query_params.get('p', 1))
+        per_page = int(request.query_params.get('q', 10))
+
+        start_index = (page - 1) * per_page
+        end_index = start_index + per_page
+
+        queryset: QuerySet[Patient] = Patient.objects.all()
+        total_count = queryset.count()
+
+        page_qs = queryset[start_index:end_index]
+
+        serializer = PatientSerializer(page_qs, many=True)
+
+        return JsonResponse({
+           'payloadType': 'PatientsRegistryDto',
+           'payload': {
+               'page': page,
+               'perPage': per_page,
+               'totalPages': ceil(total_count / per_page),
+               'entries': serializer.data
+           }
+        }, status=status.HTTP_200_OK)
 
 class PatientDetailView(APIView):
     def get(self, request, id):
