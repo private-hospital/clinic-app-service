@@ -5,8 +5,8 @@ from django.db.models import Q, CheckConstraint
 from django.core.validators import MinValueValidator
 
 SEX_CHOICES = (
-    ('man', 'Чоловіча'),
-    ('female', 'Жіноча'),
+    ('MAN', 'Чоловіча'),
+    ('FEMALE', 'Жіноча'),
 )
 
 BENEFIT_GROUP_CHOICES = (
