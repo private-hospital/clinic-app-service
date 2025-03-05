@@ -17,9 +17,9 @@ BENEFIT_GROUP_CHOICES = (
 )
 
 USER_TYPE_CHOICES = (
-    ('recorder', 'Реєстратор'),
-    ('manager', 'Керівник'),
-    ('doctor', 'Лікар'),
+    ('REGISTRAR', 'Реєстратор'),
+    ('CLINIC_HEAD', 'Керівник'),
+    ('DOCTOR', 'Лікар'),
 )
 
 PRICE_LIST_STATUS_CHOICES = (
@@ -110,7 +110,7 @@ class Invoice(models.Model):
 class User(models.Model):
     first_name = models.CharField("Ім'я", max_length=255, blank=False)
     last_name = models.CharField("Прізвище", max_length=255, blank=False)
-    middle_name = models.CharField("По батькові", max_length=255, blank=True, default='')
+    middle_name = models.CharField("По батькові", max_length=255, blank=True, default=' ')
     email = models.EmailField("Електронна пошта", max_length=255, blank=False, unique=True)
     user_type = models.CharField("Тип користувача", max_length=255, choices=USER_TYPE_CHOICES, blank=False)
     services = models.ManyToManyField(Service, verbose_name="Послуги",
@@ -121,7 +121,7 @@ class User(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         # Якщо користувач не лікар, видаляємо всі послуги
-        if self.user_type != 'doctor':
+        if self.user_type != 'DOCTOR':
             self.services.clear()
 
     def set_password(self, raw_password):
@@ -130,6 +130,7 @@ class User(models.Model):
 
     def check_password(self, raw_password):
         return bcrypt.checkpw(raw_password.encode(), self.password_hash.encode())
+
     def __str__(self):
         return f"{self.last_name} {self.first_name}"
 
@@ -158,7 +159,7 @@ class PriceListEntry(models.Model):
 class Appointment(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='appointments', blank=False)
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointments',
-                               limit_choices_to={'user_type': 'doctor'}, blank=False)
+                               limit_choices_to={'user_type': 'DOCTOR'}, blank=False)
     price_list_entry = models.ForeignKey(PriceListEntry, on_delete=models.CASCADE,
                                          related_name='appointments', blank=False)
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='appointments', blank=False)
