@@ -13,6 +13,7 @@ from .models import User
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status, generics
 from .serializers import PatientSerializer
+from rest_framework.decorators import api_view
 
 def health_check(request):
     try:
@@ -114,3 +115,12 @@ class PatientDetailView(APIView):
             return Response({"detail": "Пацієнт видалений"}, status=status.HTTP_204_NO_CONTENT)
         except Patient.DoesNotExist:
             return Response({"detail": "Пацієнт не знайдений"}, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+def create_patient(request):
+    if request.method == 'POST':
+        serializer = PatientSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'status': 'Пацієнт успішно доданий'})
+        return Response(serializer.errors, status=400)

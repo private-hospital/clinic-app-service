@@ -19,7 +19,7 @@ class PatientSerializer(serializers.ModelSerializer):
 
     def get_dob(self, obj):
         if obj.birth_date:
-            return obj.birth_date.strftime('%d.%m.%Y')  # Форматування дати
+            return obj.birth_date.strftime('%Y-%m-%d')  # Форматування дати
         return None
 
     def get_sex(self, obj):
