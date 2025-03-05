@@ -1,7 +1,7 @@
 # views.py
 import bcrypt
 from django.shortcuts import render, redirect
-from .models import MedicalRecord
+from .models import MedicalRecord, Patient
 from .forms import MedicalRecordForm
 from django.http import JsonResponse
 from django.db import connection
@@ -11,7 +11,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from .models import User
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import status
+from rest_framework import status, generics
+from .serializers import PatientSerializer
 
 def index(request):
     medi = MedicalRecord.objects.all()
@@ -72,11 +73,11 @@ class LoginView(APIView):
         try:
             user = User.objects.get(email=email)
         except User.DoesNotExist:
-            return Response({"error": "Невірний email або пароль"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"error": "Неправильний email або пароль"}, status=status.HTTP_401_UNAUTHORIZED)
 
         # Перевірка пароля
         if not bcrypt.checkpw(password.encode(), user.password_hash.encode()):
-            return Response({"error": "Невірний email або пароль"}, status=status.HTTP_401_UNAUTHORIZED)
+            return Response({"error": "Неправильний email або пароль"}, status=status.HTTP_401_UNAUTHORIZED)
 
         # Генеруємо токен
         refresh = MyRefreshToken.for_user(user)
@@ -88,3 +89,38 @@ class LoginView(APIView):
                 "accessToken": access_token
             }
         })
+
+
+class PatientListView(APIView):
+    def get(self, request):
+        patients = Patient.objects.all()
+        serializer = PatientSerializer(patients, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class PatientDetailView(APIView):
+    def get(self, request, id):
+        try:
+            patient = Patient.objects.get(id=id)
+            serializer = PatientSerializer(patient)
+            return Response(serializer.data)
+        except Patient.DoesNotExist:
+            return Response({"detail": "Пацієнт не знайдений"}, status=status.HTTP_404_NOT_FOUND)
+
+    def put(self, request, id):
+        try:
+            patient = Patient.objects.get(id=id)
+            serializer = PatientSerializer(patient, data=request.data)
+            if serializer.is_valid():
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Patient.DoesNotExist:
+            return Response({"detail": "Пацієнт не знайдений"}, status=status.HTTP_404_NOT_FOUND)
+
+    def delete(self, request, id):
+        try:
+            patient = Patient.objects.get(id=id)
+            patient.delete()
+            return Response({"detail": "Пацієнт видалений"}, status=status.HTTP_204_NO_CONTENT)
+        except Patient.DoesNotExist:
+            return Response({"detail": "Пацієнт не знайдений"}, status=status.HTTP_404_NOT_FOUND)

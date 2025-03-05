@@ -19,7 +19,7 @@ from django.urls import path
 from clinic_app_service import views
 from private_hospital.settings import API_PUB
 from rest_framework_simplejwt import views as jwt_views
-from clinic_app_service.views import LoginView
+from clinic_app_service.views import LoginView, PatientListView, PatientDetailView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,5 +27,7 @@ urlpatterns = [
     path(f'{API_PUB}/health', views.health_check, name='service health'),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(),  name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
-    path('login/', LoginView.as_view(), name='login'),
+    path(f'{API_PUB}/login/', LoginView.as_view(), name='login'),
+    path(f'{API_PUB}/registry/', PatientListView.as_view(), name='registry'),
+path(f'{API_PUB}/patient/<int:id>/', PatientDetailView.as_view(), name='patient_detail'),
 ]
