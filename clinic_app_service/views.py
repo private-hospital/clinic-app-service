@@ -45,6 +45,22 @@ def health_check(request):
         }
     })
 
+class MyRefreshToken(RefreshToken):
+    @classmethod
+    def for_user(cls, user):
+        # Створюємо стандартний токен
+        token = super().for_user(user)
+
+        middle_name = f"{user.middle_name[0]}." if user.middle_name.strip() else ' '
+
+        # Додаємо додаткові дані в payload
+        token['sub'] = {
+            'id': user.id,
+            'role': user.user_type,
+            'fullname': f"{user.last_name} {user.first_name[0]}. {middle_name}"
+        }
+        print(token)
+        return token
 
 class LoginView(APIView):
     permission_classes = [AllowAny]
@@ -62,8 +78,8 @@ class LoginView(APIView):
         if not bcrypt.checkpw(password.encode(), user.password_hash.encode()):
             return Response({"error": "Невірний email або пароль"}, status=status.HTTP_401_UNAUTHORIZED)
 
-        # Генеруємо JWT токен
-        refresh = RefreshToken.for_user(user)
+        # Генеруємо токен
+        refresh = MyRefreshToken.for_user(user)
         access_token = str(refresh.access_token)
 
         return Response({
