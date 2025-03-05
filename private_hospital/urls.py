@@ -23,7 +23,6 @@ from clinic_app_service.views import LoginView, PatientListView, PatientDetailVi
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.index, name='index'),
     path(f'{API_PUB}/health', views.health_check, name='service health'),
     path('api/token/', jwt_views.TokenObtainPairView.as_view(),  name='token_obtain_pair'),
     path('api/token/refresh/', jwt_views.TokenRefreshView.as_view(), name='token_refresh'),
