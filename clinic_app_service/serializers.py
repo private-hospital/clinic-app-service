@@ -15,7 +15,12 @@ class PatientSerializer(serializers.ModelSerializer):
     phone = serializers.CharField(source='phone_number')
     lastName = serializers.CharField(source='last_name')
     firstName = serializers.CharField(source='first_name')
-    middleName = serializers.CharField(source='middle_name')
+    middleName = serializers.CharField(
+        source='middle_name',
+        required=False,
+        allow_blank=True,
+        allow_null=True
+    )
     class Meta:
         model = Patient
         fields = ['id', 'fullname', 'phone', 'email', 'dob', 'sex', 'benefit', 'lastName', 'firstName', 'middleName']
