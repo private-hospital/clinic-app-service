@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Patient, SEX_CHOICES, BENEFIT_GROUP_CHOICES
-from datetime import datetime
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -10,8 +9,8 @@ class PatientSerializer(serializers.ModelSerializer):
         format='%Y-%m-%d',
         input_formats=['%Y-%m-%d']
     )
-    sex = serializers.SerializerMethodField(source="gender")
-    benefit = serializers.SerializerMethodField(source="benefit_group")
+    sex = serializers.CharField(source='gender')
+    benefit = serializers.CharField(source='benefit_group')
     phone = serializers.CharField(source='phone_number')
     lastName = serializers.CharField(source='last_name')
     firstName = serializers.CharField(source='first_name')
@@ -21,6 +20,7 @@ class PatientSerializer(serializers.ModelSerializer):
         allow_blank=True,
         allow_null=True
     )
+
     class Meta:
         model = Patient
         fields = ['id', 'fullname', 'phone', 'email', 'dob', 'sex', 'benefit', 'lastName', 'firstName', 'middleName']
@@ -28,8 +28,9 @@ class PatientSerializer(serializers.ModelSerializer):
     def get_fullname(self, obj):
         return f"{obj.last_name} {obj.first_name} {obj.middle_name}"
 
-    def get_sex(self, obj):
-        return dict(SEX_CHOICES).get(obj.gender, obj.gender)
+    def to_representation(self, instance):
 
-    def get_benefit(self, obj):
-        return dict(BENEFIT_GROUP_CHOICES).get(obj.benefit_group, obj.benefit_group)
+        data = super().to_representation(instance)
+        data['sex'] = dict(SEX_CHOICES).get(instance.gender, instance.gender)
+        data['benefit'] = dict(BENEFIT_GROUP_CHOICES).get(instance.benefit_group, instance.benefit_group)
+        return data
