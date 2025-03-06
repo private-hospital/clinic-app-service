@@ -2,21 +2,21 @@
 from math import ceil
 
 import bcrypt
-from django.db.models.query import QuerySet
-from django.shortcuts import render, redirect
-from .models import MedicalRecord, Patient
-from .forms import MedicalRecordForm
-from django.http import JsonResponse
 from django.db import connection
+from django.db.models.query import QuerySet
 from django.db.utils import OperationalError
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.permissions import AllowAny
-from .models import User
-from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import status, generics
-from .serializers import PatientSerializer
+from django.http import JsonResponse
+from rest_framework import status
 from rest_framework.decorators import api_view
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+
+from .models import Patient
+from .models import User
+from .serializers import PatientSerializer
+
 
 def health_check(request):
     try:

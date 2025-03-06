@@ -23,14 +23,14 @@ USER_TYPE_CHOICES = (
 )
 
 PRICE_LIST_STATUS_CHOICES = (
-    ('active', 'Активний'),
-    ('inactive', 'Неактивний'),
+    ('ACTIVE', 'Активний'),
+    ('INACTIVE', 'Неактивний'),
 )
 
 APPOINTMENT_STATUS_CHOICES = (
-    ('planned', 'Запланований'),
-    ('canceled', 'Скасований'),
-    ('done', 'Завершений'),
+    ('PLANNED', 'Запланований'),
+    ('CANCELED', 'Скасований'),
+    ('COMPLETED', 'Завершений'),
 )
 
 
@@ -138,9 +138,10 @@ class User(models.Model):
 class PriceList(models.Model):
     name = models.CharField("Назва прайс-листу", max_length=255, blank=False)
     status = models.CharField("Стан", max_length=15, choices=PRICE_LIST_STATUS_CHOICES,
-                              default='Неактивний', blank=False)
+                              default='INACTIVE', blank=False)
     is_archived = models.BooleanField("Є архівованим", blank=False, default=False)
     archive_reason = models.TextField("Причина архівування", max_length=255, blank=True)
+    archivation_date = models.DateTimeField("Дата архівування", null=True, blank=True)
 
     def __str__(self):
         return f"Прайс-лист {self.pk} "
@@ -165,7 +166,7 @@ class Appointment(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE, related_name='appointments', blank=False)
 
     execution_status = models.CharField("Стан виконання", max_length=15, choices=APPOINTMENT_STATUS_CHOICES,
-                                        default='Заплановано', blank=False)
+                                        default='PLANNED', blank=False)
     appointment_date = models.DateTimeField("Дата проведення", blank=True, null=True)
     completion_date = models.DateTimeField("Дата виконання", blank=True, null=True)
 
