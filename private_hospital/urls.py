@@ -18,9 +18,12 @@ from django.contrib import admin
 from django.urls import path
 from clinic_app_service import views
 from clinic_app_service.app_views.price_lists_view import PriceListsView
-
 from clinic_app_service.app_views.active_price_list_view import ActivePriceListView
+from clinic_app_service.app_views.service_names_view import ServiceNamesView
 from clinic_app_service.app_views.service_view import ServiceView
+from clinic_app_service.app_views.statement_pdf_view import StatementPdfView
+from clinic_app_service.app_views.statements_registry_view import StatementsRegistryView
+from clinic_app_service.app_views.invoice_pdf_view import InvoicePdfView
 from clinic_app_service.app_views.statistics_view import WeeklyStatsView, TodayCumulateView, DoctorsView, \
     DoctorDailyCountsView, DoctorDailyRevenuesView
 from private_hospital.settings import API_PUB, API_OWN
@@ -43,5 +46,9 @@ urlpatterns = [
     path(f'{API_OWN}/stats/cumulate', TodayCumulateView.as_view(), name='todays-visits-cumulate'),
     path(f'{API_OWN}/stats/doctor/counts', DoctorDailyCountsView.as_view(), name='doctor-weekly-count-stats'),
     path(f'{API_OWN}/stats/doctor/revenue', DoctorDailyRevenuesView.as_view(), name='doctor-weekly-revenue-stats'),
-    path(f'{API_PUB}/doctors', DoctorsView.as_view(), name='doctors-get-public-api')
+    path(f'{API_PUB}/doctors', DoctorsView.as_view(), name='doctors-get-public-api'),
+    path(f'{API_PUB}/services/names', ServiceNamesView.as_view(), name='service-names-for-filter'),
+    path(f'{API_OWN}/statements', StatementsRegistryView.as_view(), name='statements-view'),
+    path(f'{API_OWN}/statements/export', StatementPdfView.as_view(), name='statement-pdf-export'),
+    path(f'{API_OWN}/invoices/export', InvoicePdfView.as_view(), name='invoice-pdf-export')
 ]
