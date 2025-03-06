@@ -17,13 +17,10 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from clinic_app_service import views
-from clinic_app_service.app_views.price_lists_view import PriceListsView
-
-from clinic_app_service.app_views.active_price_list_view import ActivePriceListView
-from clinic_app_service.app_views.service_view import ServiceView
-from private_hospital.settings import API_PUB, API_OWN
+from private_hospital.settings import API_PUB
 from rest_framework_simplejwt import views as jwt_views
-from clinic_app_service.views import LoginView, PatientListView, PatientDetailView, create_patient
+from clinic_app_service.views import (LoginView, PatientListView, PatientDetailView, create_patient,
+                                      MedicalRecordListView)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -34,7 +31,5 @@ urlpatterns = [
     path(f'{API_PUB}/registry/', PatientListView.as_view(), name='registry'),
     path(f'{API_PUB}/patient/<int:id>/', PatientDetailView.as_view(), name='patient_detail'),
     path(f'{API_PUB}/patients', create_patient, name='create_patient'),
-    path(f'{API_OWN}/price-lists', PriceListsView.as_view(), name='price-lists-crud'),
-    path(f'{API_OWN}/price-lists/active', ActivePriceListView.as_view(), name='active-price-list-ops'),
-    path(f'{API_OWN}/services', ServiceView.as_view(), name='services-ops')
+    path(f'{API_PUB}/appointments/', MedicalRecordListView.as_view(), name='appointments'),
 ]

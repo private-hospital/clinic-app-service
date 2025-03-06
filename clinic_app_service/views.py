@@ -1,22 +1,23 @@
 # views.py
 from math import ceil
-
 import bcrypt
-from django.db import connection
 from django.db.models.query import QuerySet
-from django.db.utils import OperationalError
+from django.shortcuts import render, redirect
+from .models import MedicalRecord, Patient
+from .forms import MedicalRecordForm
 from django.http import JsonResponse
-from rest_framework import status
-from rest_framework.decorators import api_view
-from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
+from django.db import connection
+from django.db.utils import OperationalError
 from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework.permissions import AllowAny
+from .models import User, Service, Appointment
 from rest_framework_simplejwt.tokens import RefreshToken
-
-from .models import Patient
-from .models import User
-from .serializers import PatientSerializer
-
+from rest_framework import status, generics
+from .serializers import PatientSerializer,  MedicalRecordSerializer
+from rest_framework.decorators import api_view
+from datetime import datetime
+from rest_framework.generics import ListAPIView
 
 def health_check(request):
     try:
@@ -146,3 +147,27 @@ def create_patient(request):
             serializer.save()
             return Response({'status': 'Пацієнт успішно доданий'})
         return Response(serializer.errors, status=400)
+
+def get_services(request):
+    services = Service.objects.filter(is_service_archived=False).values('id', 'service_name')
+    return JsonResponse(list(services), safe=False)
+
+def get_doctors_by_service(request, service_id):
+    doctors = User.objects.filter(user_type='DOCTOR', services__id=service_id).values('id', 'first_name', 'last_name')
+    return JsonResponse(list(doctors), safe=False)
+
+def get_available_times(request, doctor_id, date):
+    try:
+        date_obj = datetime.strptime(date, "%Y-%m-%d").date()
+        booked_times = Appointment.objects.filter(doctor_id=doctor_id, appointment_date__date=date_obj).values_list('appointment_date', flat=True)
+
+        all_times = ["09:00", "09:30", "10:00", "10:30", "11:00"]  # Приклад
+        available_times = [time for time in all_times if time not in [bt.strftime('%H:%M') for bt in booked_times]]
+
+        return JsonResponse(available_times, safe=False)
+    except ValueError:
+        return JsonResponse({"error": "Invalid date format"}, status=400)
+
+class MedicalRecordListView(ListAPIView):
+    queryset = MedicalRecord.objects.all().select_related('patient').prefetch_related('services')
+    serializer_class = MedicalRecordSerializer
