@@ -1,23 +1,18 @@
-# views.py
 from math import ceil
 import bcrypt
 from django.db.models.query import QuerySet
-from django.shortcuts import render, redirect
-from .models import MedicalRecord, Patient
-from .forms import MedicalRecordForm
 from django.http import JsonResponse
 from django.db import connection
 from django.db.utils import OperationalError
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from .models import User, Service, Appointment
+from .models import User, Service, Appointment, Patient
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework import status, generics
+from rest_framework import status
 from .serializers import PatientSerializer
 from rest_framework.decorators import api_view
 from datetime import datetime
-from rest_framework.generics import ListAPIView
 
 def health_check(request):
     try:
@@ -167,10 +162,6 @@ def get_available_times(request, doctor_id, date):
         return JsonResponse(available_times, safe=False)
     except ValueError:
         return JsonResponse({"error": "Invalid date format"}, status=400)
-
-# class MedicalRecordListView(ListAPIView):
-#     queryset = MedicalRecord.objects.all().select_related('patient').prefetch_related('services')
-#     serializer_class = MedicalRecordSerializer
 
 
 @api_view(['GET', 'PUT'])
