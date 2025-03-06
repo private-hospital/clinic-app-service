@@ -10,7 +10,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 
 from ..models import PriceList, PriceListEntry, Service
-from ..serializers import PriceListSerializer
+from clinic_app_service.serializers import PriceListSerializer
 
 
 class PriceListsView(APIView):

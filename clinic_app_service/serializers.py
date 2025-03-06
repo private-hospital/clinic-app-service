@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Patient, SEX_CHOICES, BENEFIT_GROUP_CHOICES, MedicalRecord
+from .models import Patient, SEX_CHOICES, BENEFIT_GROUP_CHOICES, PriceList
 
 
 class PatientSerializer(serializers.ModelSerializer):
@@ -35,11 +35,42 @@ class PatientSerializer(serializers.ModelSerializer):
         data['benefit'] = dict(BENEFIT_GROUP_CHOICES).get(instance.benefit_group, instance.benefit_group)
         return data
 
-class MedicalRecordSerializer(serializers.ModelSerializer):
-    patientName = serializers.CharField(source='patient.full_name', read_only=True)
-    service = serializers.StringRelatedField(source='services')
-    appointmentDate = serializers.StringRelatedField(source='created_at')
+
+class PriceListSerializer(serializers.ModelSerializer):
+    title = serializers.CharField(source='name')
+    state = serializers.CharField(source='status')
+    isArchived = serializers.BooleanField(source='is_archived')
+    archivationReason = serializers.CharField(
+        source='archive_reason',
+        required=False,
+        allow_blank=True
+    )
+    archivationDate = serializers.SerializerMethodField()
 
     class Meta:
-        model = MedicalRecord
-        fields = ['id', 'patientName', 'service', 'appointmentDate']
+        model = PriceList
+        fields = [
+            'id',
+            'title',
+            'state',
+            'isArchived',
+            'archivationReason',
+            'archivationDate',
+        ]
+
+    def get_archivationDate(self, obj):
+        if obj.archivation_date:
+            return int(obj.archivation_date.timestamp() * 1000)
+        return None
+
+from rest_framework import serializers
+from .models import PriceListEntry
+
+class CurrentPriceListEntrySerializer(serializers.ModelSerializer):
+    label = serializers.CharField(source='service.service_name')
+    serviceId = serializers.IntegerField(source='service.id')
+    price = serializers.DecimalField(max_digits=12, decimal_places=2)
+
+    class Meta:
+        model = PriceListEntry
+        fields = ['label', 'serviceId', 'price']

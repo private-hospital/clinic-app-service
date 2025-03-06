@@ -14,7 +14,7 @@ from rest_framework.permissions import AllowAny
 from .models import User, Service, Appointment
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import status, generics
-from .serializers import PatientSerializer,  MedicalRecordSerializer
+from .serializers import PatientSerializer
 from rest_framework.decorators import api_view
 from datetime import datetime
 from rest_framework.generics import ListAPIView
@@ -168,6 +168,8 @@ def get_available_times(request, doctor_id, date):
     except ValueError:
         return JsonResponse({"error": "Invalid date format"}, status=400)
 
-class MedicalRecordListView(ListAPIView):
-    queryset = MedicalRecord.objects.all().select_related('patient').prefetch_related('services')
-    serializer_class = MedicalRecordSerializer
+# class MedicalRecordListView(ListAPIView):
+#     queryset = MedicalRecord.objects.all().select_related('patient').prefetch_related('services')
+#     serializer_class = MedicalRecordSerializer
+
+

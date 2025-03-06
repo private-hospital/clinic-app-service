@@ -5,7 +5,7 @@ from django.db.models import Q, CheckConstraint
 from django.core.validators import MinValueValidator
 
 SEX_CHOICES = (
-    ('MAN', 'Чоловіча'),
+    ('MALE', 'Чоловіча'),
     ('FEMALE', 'Жіноча'),
 )
 
