@@ -94,7 +94,7 @@ class PatientListView(APIView):
         start_index = (page - 1) * per_page
         end_index = start_index + per_page
 
-        queryset: QuerySet[Patient] = Patient.objects.all()
+        queryset: QuerySet[Patient] = Patient.objects.all().order_by('id')
         total_count = queryset.count()
 
         page_qs = queryset[start_index:end_index]
@@ -173,3 +173,26 @@ def get_available_times(request, doctor_id, date):
 #     serializer_class = MedicalRecordSerializer
 
 
+@api_view(['GET', 'PUT'])
+def get_patient(request, pk):
+    try:
+        patient = Patient.objects.get(pk=pk)
+    except Patient.DoesNotExist:
+        return Response({"detail": "Пацієнта не знайдено"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = PatientSerializer(patient)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+@api_view(['GET', 'PUT'])
+def update_patient(request, pk):
+    try:
+        patient = Patient.objects.get(pk=pk)
+    except Patient.DoesNotExist:
+        return Response({"detail": "Пацієнта не знайдено"}, status=status.HTTP_404_NOT_FOUND)
+
+    # Використовуємо серіалізатор для оновлення
+    serializer = PatientSerializer(patient, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()  # Зберігає зміни в БД
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

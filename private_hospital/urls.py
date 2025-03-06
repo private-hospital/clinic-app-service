@@ -25,7 +25,8 @@ from clinic_app_service.app_views.statistics_view import WeeklyStatsView, TodayC
     DoctorDailyCountsView, DoctorDailyRevenuesView
 from private_hospital.settings import API_PUB, API_OWN
 from rest_framework_simplejwt import views as jwt_views
-from clinic_app_service.views import LoginView, PatientListView, PatientDetailView, create_patient
+from clinic_app_service.views import LoginView, PatientListView, PatientDetailView, create_patient, update_patient, \
+    get_patient
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -43,5 +44,7 @@ urlpatterns = [
     path(f'{API_OWN}/stats/cumulate', TodayCumulateView.as_view(), name='todays-visits-cumulate'),
     path(f'{API_OWN}/stats/doctor/counts', DoctorDailyCountsView.as_view(), name='doctor-weekly-count-stats'),
     path(f'{API_OWN}/stats/doctor/revenue', DoctorDailyRevenuesView.as_view(), name='doctor-weekly-revenue-stats'),
-    path(f'{API_PUB}/doctors', DoctorsView.as_view(), name='doctors-get-public-api')
+    path(f'{API_PUB}/doctors', DoctorsView.as_view(), name='doctors-get-public-api'),
+    path(f'{API_PUB}/patient/<int:pk>', update_patient, name='update-patient'),
+    path(f'{API_PUB}/patient/<int:pk>', get_patient, name='get-patient'),
 ]
