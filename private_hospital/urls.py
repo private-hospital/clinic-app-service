@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from clinic_app_service import views
+from clinic_app_service.app_views.appointments_view import AppointmentsView
 from clinic_app_service.app_views.price_lists_view import PriceListsView
 from clinic_app_service.app_views.active_price_list_view import ActivePriceListView
 from clinic_app_service.app_views.service_names_view import ServiceNamesView
@@ -26,7 +27,7 @@ from clinic_app_service.app_views.statements_registry_view import StatementsRegi
 from clinic_app_service.app_views.invoice_pdf_view import InvoicePdfView
 from clinic_app_service.app_views.statistics_view import WeeklyStatsView, TodayCumulateView, DoctorsView, \
     DoctorDailyCountsView, DoctorDailyRevenuesView
-from private_hospital.settings import API_PUB, API_OWN
+from private_hospital.settings import API_PUB, API_OWN, API_DOC
 from rest_framework_simplejwt import views as jwt_views
 from clinic_app_service.views import LoginView, PatientListView, PatientDetailView, create_patient
 
@@ -50,5 +51,6 @@ urlpatterns = [
     path(f'{API_PUB}/services/names', ServiceNamesView.as_view(), name='service-names-for-filter'),
     path(f'{API_OWN}/statements', StatementsRegistryView.as_view(), name='statements-view'),
     path(f'{API_OWN}/statements/export', StatementPdfView.as_view(), name='statement-pdf-export'),
-    path(f'{API_OWN}/invoices/export', InvoicePdfView.as_view(), name='invoice-pdf-export')
+    path(f'{API_OWN}/invoices/export', InvoicePdfView.as_view(), name='invoice-pdf-export'),
+    path(f'{API_DOC}/appointments', AppointmentsView.as_view(), name='appointments-doctor-operations')
 ]
