@@ -106,3 +106,28 @@ class AppointmentsView(APIView):
                 'status': f'Appointment {appt_id} marked as COMPLETED.'
             }
         }, status=status.HTTP_200_OK)
+
+    def put(self, request):
+        appt_id = request.query_params.get('id')
+
+        if not appt_id:
+            return JsonResponse({
+                'payloadType': 'ErrorResponseDto',
+                'payload': {'detail': 'Missing "id" query parameter.'}
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            appt = Appointment.objects.get(pk=appt_id)
+        except Appointment.DoesNotExist:
+            return JsonResponse({
+                'payloadType': 'ErrorResponseDto',
+                'payload': {'detail': f'Appointment with id={appt_id} does not exist.'}
+            }, status=status.HTTP_404_NOT_FOUND)
+
+        appt.execution_status = 'CANCELED'
+        appt.save()
+
+        return JsonResponse({
+            'payloadType': 'StatusResponseDto',
+            'payload': {'status': f'Appointment {appt_id} marked as CANCELED.'}
+        }, status=status.HTTP_200_OK)
