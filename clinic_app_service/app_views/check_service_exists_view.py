@@ -19,6 +19,6 @@ class CheckServiceExistsView(APIView):
         return JsonResponse({
             'payloadType': 'StatusResponseDto',
             'payload': {
-                'exists': service_exists
+                'status': 'EXISTS' if service_exists else 'DOES_NOT_EXIST'
             }
         }, status=status.HTTP_200_OK)
