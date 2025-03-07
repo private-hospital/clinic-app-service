@@ -31,8 +31,8 @@ class PatientSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
 
         data = super().to_representation(instance)
-        data['sex'] = dict(SEX_CHOICES).get(instance.gender, instance.gender)
-        data['benefit'] = dict(BENEFIT_GROUP_CHOICES).get(instance.benefit_group, instance.benefit_group)
+        data['sex'] = instance.gender
+        data['benefit'] = instance.benefit_group
         return data
 
 
