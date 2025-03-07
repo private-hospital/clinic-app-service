@@ -38,7 +38,8 @@ from clinic_app_service.app_views.statistics_view import WeeklyStatsView, TodayC
     DoctorDailyCountsView, DoctorDailyRevenuesView
 from private_hospital.settings import API_PUB, API_OWN, API_DOC, API_REG
 from rest_framework_simplejwt import views as jwt_views
-from clinic_app_service.views import LoginView, PatientListView, PatientDetailView, create_patient
+from clinic_app_service.views import LoginView, PatientListView, PatientDetailView, create_patient, update_patient, \
+    get_patient
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -70,5 +71,8 @@ urlpatterns = [
     path(f'{API_REG}/calculate-cart', CartCalculationView.as_view(), name='cart-calculation-view'),
     path(f'{API_REG}/calculate-totals', CalculateTotalsView.as_view(), name='calculate-totals-view'),
     path(f'{API_REG}/get-patient-discount', GetPatientDiscountView.as_view(), name='get-patient-discount-view'),
-    path(f'{API_REG}/export-invoice', DynamicInvoiceView.as_view(), name='export-dynamic-invoice')
+    path(f'{API_REG}/export-invoice', DynamicInvoiceView.as_view(), name='export-dynamic-invoice'),
+    path(f'{API_PUB}/doctors', DoctorsView.as_view(), name='doctors-get-public-api'),
+    path(f'{API_PUB}/patient/<int:pk>', update_patient, name='update-patient'),
+    path(f'{API_PUB}/patient/<int:pk>', get_patient, name='get-patient'),
 ]
