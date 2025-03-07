@@ -50,7 +50,6 @@ class MyRefreshToken(RefreshToken):
             'role': user.user_type,
             'fullname': f"{user.last_name} {user.first_name[0]}. {middle_name}"
         }
-        print(token)
         return token
 
 class LoginView(APIView):

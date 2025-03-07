@@ -38,7 +38,7 @@ class AvailableTimesView(APIView):
             appointment_date__year=local_date.year,
             appointment_date__month=local_date.month,
             appointment_date__day=local_date.day
-        ).values_list('appointment_date', flat=True)
+        ).exclude(execution_status='CANCELED').values_list('appointment_date', flat=True)
 
         tz = pytz.FixedOffset(120)
         taken_slots = {appt.astimezone(tz).time() for appt in existing_appointments}
