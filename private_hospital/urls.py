@@ -31,6 +31,7 @@ from clinic_app_service.app_views.medical_records_view import MedicalRecordsView
 from clinic_app_service.app_views.patient_appointments_view import PatientAppointmentsView
 from clinic_app_service.app_views.price_lists_view import PriceListsView
 from clinic_app_service.app_views.active_price_list_view import ActivePriceListView
+from clinic_app_service.app_views.remove_verification_code_view import RemoveVerificationCodeView
 from clinic_app_service.app_views.service_names_view import ServiceNamesView
 from clinic_app_service.app_views.service_view import ServiceView
 from clinic_app_service.app_views.statement_pdf_view import StatementPdfView
@@ -78,6 +79,7 @@ urlpatterns = [
     path(f'{API_PUB}/patient/<int:pk>', update_patient, name='update-patient'),
     path(f'{API_PUB}/patient/<int:pk>', get_patient, name='get-patient'),
     path(f'{API_PUB}/send-verification', SendVerificationCodeView.as_view(), name='send-email-verification-view'),
+    path(f'{API_PUB}/remove-verification', RemoveVerificationCodeView.as_view(), name='remove-email-verification-view'),
     path(f'{API_PUB}/verify', VerifyEmailView.as_view(), name='verify-email-view'),
     path(f'{API_OWN}/service-exists', CheckServiceExistsView.as_view(), name='check-if-service-exists')
 ]
