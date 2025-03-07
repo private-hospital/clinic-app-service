@@ -89,28 +89,30 @@
         <td>{{ loop.index }}</td>
         <td>{{ item.date }}</td>
         <td>{{ item.service_name }}</td>
-        <td>{{ item.price }}</td>
+        <td>{{ item.price }} грн</td>
     </tr>
     {% endfor %}
     </tbody>
 </table>
 
 <div class="totals-block">
-    <p><strong>Проміжний підсумок:</strong> {{ subtotal }} грн</p>
-    <p><strong>Разом до оплати:</strong> {{ total }} грн</p>
+    <p>Проміжний підсумок: {{ subtotal }} грн</p>
+    <p>Знижка ({{ discount_percent }}%): -{{ discount_value }} грн</p>
+    <p><strong>Разом до оплати: {{ total }} грн</strong></p>
 </div>
 
 <div class="footer-block">
     <div class="signature-block">
         <div class="signature-item">
             <p><strong>Затверджено:</strong></p>
-            <p>Посада: Реєстратор</p>
-            <p>ПІБ: Петрова Олена Сергіївна</p>
+            <p>Керівник клініки</p>
+            <p>Петрова Олена Сергіївна</p>
             <div class="signature-line"></div>
         </div>
         <div class="signature-item">
+            <br/>
+            <br/>
             <p>Дата: {{ generation_date }}</p>
-            <p>__________________</p>
             <p>Підпис</p>
             <div class="signature-line"></div>
         </div>
