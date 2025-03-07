@@ -18,13 +18,14 @@ def send_appointment_notification(
         patient_name: str,
         appointment_date: str,
         appointment_time: str,
-        patient_id: int
+        patient_id: int,
+        patient_sex: str
 ):
     subject = "Заплановано огляд пацієнта"
     body_html = f"""
     <p>{doctor_name},</p>
     <br />
-    <p>Повідомляємо, що до вас на прийом записаний(а) пацієнт(ка) {patient_name}.</p>
+    <p>Повідомляємо, що до вас на прийом записан{'ий' if patient_sex == 'MALE' else 'а'} пацієнт{'ка' if patient_sex == 'FEMALE' else ''} {patient_name}.</p>
 
     <p>Дата прийому: {appointment_date}</p>
     <p>Час прийому: {appointment_time}</p>

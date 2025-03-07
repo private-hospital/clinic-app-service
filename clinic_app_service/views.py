@@ -81,30 +81,59 @@ class LoginView(APIView):
         })
 
 
+from math import ceil
+from django.db.models import Q, Value, CharField
+from django.db.models.functions import Concat
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+from rest_framework import status
+from rest_framework.views import APIView
+from .models import Patient
+from .serializers import PatientSerializer  # Make sure your PatientSerializer is defined
+
 class PatientListView(APIView):
     def get(self, request):
         page = int(request.query_params.get('p', 1))
         per_page = int(request.query_params.get('q', 10))
+        search_phrase = request.query_params.get('s', '').strip()
 
+        queryset = Patient.objects.all().order_by('id').annotate(
+            full_name=Concat(
+                'last_name', Value(' '),
+                'first_name', Value(' '),
+                'middle_name',
+                output_field=CharField()
+            )
+        )
+
+        if search_phrase:
+            filters = Q(first_name__icontains=search_phrase) | \
+                      Q(last_name__icontains=search_phrase) | \
+                      Q(middle_name__icontains=search_phrase) | \
+                      Q(full_name__icontains=search_phrase) | \
+                      Q(phone_number__icontains=search_phrase) | \
+                      Q(email__icontains=search_phrase)
+            if search_phrase.isdigit():
+                filters |= Q(id=int(search_phrase))
+            queryset = queryset.filter(filters)
+
+        total_count = queryset.count()
         start_index = (page - 1) * per_page
         end_index = start_index + per_page
 
-        queryset: QuerySet[Patient] = Patient.objects.all().order_by('id')
-        total_count = queryset.count()
-
         page_qs = queryset[start_index:end_index]
-
         serializer = PatientSerializer(page_qs, many=True)
 
         return JsonResponse({
-           'payloadType': 'PatientsRegistryDto',
-           'payload': {
-               'page': page,
-               'perPage': per_page,
-               'totalPages': ceil(total_count / per_page),
-               'entries': serializer.data
-           }
+            'payloadType': 'PatientsRegistryDto',
+            'payload': {
+                'page': page,
+                'perPage': per_page,
+                'totalPages': ceil(total_count / per_page),
+                'entries': serializer.data
+            }
         }, status=status.HTTP_200_OK)
+
 
 class PatientDetailView(APIView):
     def get(self, request, id):

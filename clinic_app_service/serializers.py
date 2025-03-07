@@ -10,7 +10,7 @@ class PatientSerializer(serializers.ModelSerializer):
         input_formats=['%Y-%m-%d']
     )
     sex = serializers.CharField(source='gender')
-    benefit = serializers.CharField(source='benefit_group')
+    benefit = serializers.CharField(source='benefit_group', allow_blank=True)
     phone = serializers.CharField(source='phone_number')
     lastName = serializers.CharField(source='last_name')
     firstName = serializers.CharField(source='first_name')
@@ -29,7 +29,6 @@ class PatientSerializer(serializers.ModelSerializer):
         return f"{obj.last_name} {obj.first_name} {obj.middle_name}"
 
     def to_representation(self, instance):
-
         data = super().to_representation(instance)
         data['sex'] = instance.gender
         data['benefit'] = instance.benefit_group

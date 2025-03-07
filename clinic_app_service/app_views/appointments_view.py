@@ -98,6 +98,7 @@ class AppointmentsView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         appt.execution_status = 'COMPLETED'
+        appt.completion_date = timezone.now()
         appt.save()
 
         return JsonResponse({

@@ -107,7 +107,7 @@ class CreateAppointmentView(APIView):
 
                 doctor_name = f"{doctor.first_name} {doctor.last_name}"
                 doctor_email = doctor.email
-                patient_name = f"{patient.last_name} {patient.first_name}"
+                patient_name = f"{patient.last_name} {patient.first_name} {patient.middle_name}"
                 appt_date_formatted = appt.appointment_date.strftime("%d.%m.%Y")
                 appt_time_formatted = appt.appointment_date.strftime("%H:%M")
 
@@ -117,7 +117,8 @@ class CreateAppointmentView(APIView):
                     patient_name=patient_name,
                     appointment_date=appt_date_formatted,
                     appointment_time=appt_time_formatted,
-                    patient_id=patient.id
+                    patient_id=patient.id,
+                    patient_sex=patient.gender
                 )
 
         return JsonResponse({
