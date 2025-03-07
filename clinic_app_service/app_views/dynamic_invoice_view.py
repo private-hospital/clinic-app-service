@@ -48,6 +48,6 @@ class DynamicInvoiceView(APIView):
 
         response = HttpResponse(pdf_bytes, content_type='application/pdf')
         response['Content-Disposition'] = (
-            f'attachment; filename="DynamicInvoice-{invoice_number}.pdf"'
+            f'attachment; filename="Invoice.pdf"'
         )
         return response

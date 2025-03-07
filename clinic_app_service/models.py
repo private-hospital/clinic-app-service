@@ -126,6 +126,7 @@ class User(models.Model):
                                       related_name='user_doctor', blank=True)
     password_hash = models.TextField("Хеш паролю", blank=False)
     qualification = models.CharField("Кваліфікація", max_length=255, blank=False)
+    verification_code = models.IntegerField("Код верифікації", blank=True)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)

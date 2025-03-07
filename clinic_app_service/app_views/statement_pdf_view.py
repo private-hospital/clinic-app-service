@@ -88,7 +88,7 @@ class StatementPdfView(View):
 
         response = HttpResponse(pdf_bytes, content_type='application/pdf')
         response['Content-Disposition'] = (
-            f'attachment; filename="Statement-{timezone.now().strftime("%d.%m.%Y-%H.%M.%S")}.pdf"'
+            f'attachment; filename="Statement.pdf"'
         )
 
         token = get_token(request)
