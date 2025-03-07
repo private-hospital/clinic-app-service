@@ -46,3 +46,25 @@ def send_appointment_notification(
         SendGridAPIClient(os.environ.get('SENDGRID_API_KEY')).send(message)
     except Exception as e:
         print(f"Error sending email via SendGrid: {e}")
+
+def send_email_verification_notification(
+        email: str,
+        verification_code: int
+):
+    subject = "Ваш код підтвердження VitaLine"
+    body_html = f"""
+    <p>Ваш код підтвердження - {verification_code}.</p>
+    <p>З повагою, команда клініки VitaLine</p>
+    """
+
+    message = Mail(
+        from_email='appointments@vitalineph.com',
+        to_emails=remove_plus_extension(email),
+        subject=subject,
+        html_content=body_html
+    )
+
+    try:
+        SendGridAPIClient(os.environ.get('SENDGRID_API_KEY')).send(message)
+    except Exception as e:
+        print(f"Error sending email via SendGrid: {e}")

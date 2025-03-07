@@ -22,8 +22,10 @@ from clinic_app_service.app_views.available_doctors_view import AvailableDoctors
 from clinic_app_service.app_views.available_times_view import AvailableTimesView
 from clinic_app_service.app_views.calculate_totals_view import CalculateTotalsView
 from clinic_app_service.app_views.cart_calculation_view import CartCalculationView
+from clinic_app_service.app_views.check_service_exists_view import CheckServiceExistsView
 from clinic_app_service.app_views.create_appointment_view import CreateAppointmentView
 from clinic_app_service.app_views.dynamic_invoice_view import DynamicInvoiceView
+from clinic_app_service.app_views.email_verification_view import SendVerificationCodeView, VerifyEmailView
 from clinic_app_service.app_views.get_patient_discount_view import GetPatientDiscountView
 from clinic_app_service.app_views.medical_records_view import MedicalRecordsView
 from clinic_app_service.app_views.patient_appointments_view import PatientAppointmentsView
@@ -75,4 +77,7 @@ urlpatterns = [
     path(f'{API_PUB}/doctors', DoctorsView.as_view(), name='doctors-get-public-api'),
     path(f'{API_PUB}/patient/<int:pk>', update_patient, name='update-patient'),
     path(f'{API_PUB}/patient/<int:pk>', get_patient, name='get-patient'),
+    path(f'{API_PUB}/send-verification', SendVerificationCodeView.as_view(), name='send-email-verification-view'),
+    path(f'{API_PUB}/verify', VerifyEmailView.as_view(), name='verify-email-view'),
+    path(f'{API_OWN}/service-exists', CheckServiceExistsView.as_view(), name='check-if-service-exists')
 ]

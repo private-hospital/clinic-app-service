@@ -126,7 +126,6 @@ class User(models.Model):
                                       related_name='user_doctor', blank=True)
     password_hash = models.TextField("Хеш паролю", blank=False)
     qualification = models.CharField("Кваліфікація", max_length=255, blank=False)
-    verification_code = models.IntegerField("Код верифікації", null=True, blank=True)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
@@ -182,3 +181,10 @@ class Appointment(models.Model):
 
     def __str__(self):
         return f"Прийом {self.pk}"
+
+class Verification(models.Model):
+    email = models.CharField("Email", null=False, blank=False, max_length=255, unique=True, primary_key=True)
+    code = models.IntegerField("Verification code", null=True, blank=True)
+
+    def __str__(self):
+        return  f"Verification {self.email}"
