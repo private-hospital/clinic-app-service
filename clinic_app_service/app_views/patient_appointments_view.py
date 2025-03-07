@@ -1,4 +1,3 @@
-from math import ceil
 from django.db.models import QuerySet
 from django.http import JsonResponse
 from rest_framework.views import APIView

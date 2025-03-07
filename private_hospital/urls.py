@@ -18,6 +18,13 @@ from django.contrib import admin
 from django.urls import path
 from clinic_app_service import views
 from clinic_app_service.app_views.appointments_view import AppointmentsView
+from clinic_app_service.app_views.available_doctors_view import AvailableDoctorsView
+from clinic_app_service.app_views.available_times_view import AvailableTimesView
+from clinic_app_service.app_views.calculate_totals_view import CalculateTotalsView
+from clinic_app_service.app_views.cart_calculation_view import CartCalculationView
+from clinic_app_service.app_views.create_appointment_view import CreateAppointmentView
+from clinic_app_service.app_views.dynamic_invoice_view import DynamicInvoiceView
+from clinic_app_service.app_views.get_patient_discount_view import GetPatientDiscountView
 from clinic_app_service.app_views.medical_records_view import MedicalRecordsView
 from clinic_app_service.app_views.patient_appointments_view import PatientAppointmentsView
 from clinic_app_service.app_views.price_lists_view import PriceListsView
@@ -56,5 +63,12 @@ urlpatterns = [
     path(f'{API_OWN}/invoices/export', InvoicePdfView.as_view(), name='invoice-pdf-export'),
     path(f'{API_DOC}/appointments', AppointmentsView.as_view(), name='appointments-doctor-operations'),
     path(f'{API_DOC}/records', MedicalRecordsView.as_view(), name='medical-records-ops'),
-    path(f'{API_REG}/patient-appointments/', PatientAppointmentsView.as_view(), name='patient-appointments-ops')
+    path(f'{API_REG}/patient-appointments/', PatientAppointmentsView.as_view(), name='patient-appointments-ops'),
+    path(f'{API_REG}/available-doctors', AvailableDoctorsView.as_view(), name='available-doctors-view'),
+    path(f'{API_REG}/available-times', AvailableTimesView.as_view(), name='available-times-view'),
+    path(f'{API_REG}/create-appointments', CreateAppointmentView.as_view(), name='create-appointments-view'),
+    path(f'{API_REG}/calculate-cart', CartCalculationView.as_view(), name='cart-calculation-view'),
+    path(f'{API_REG}/calculate-totals', CalculateTotalsView.as_view(), name='calculate-totals-view'),
+    path(f'{API_REG}/get-patient-discount', GetPatientDiscountView.as_view(), name='get-patient-discount-view'),
+    path(f'{API_REG}/export-invoice', DynamicInvoiceView.as_view(), name='export-dynamic-invoice')
 ]
