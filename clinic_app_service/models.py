@@ -1,4 +1,5 @@
 import bcrypt
+from django.contrib.postgres.fields.array import ArrayField
 from django.utils import timezone
 from django.db import models
 from django.db.models import Q, CheckConstraint
@@ -58,15 +59,23 @@ class Service(models.Model):
 
 class MedicalRecord(models.Model):
     RECORD_TYPE_CHOICES = (
-        ('analysis', 'Результати аналізів'),
-        ('referral', 'Направлення'),
-        ('diagnosis', 'Діагноз'),
+        ('ANALYSIS_RESULTS', 'Результати аналізів'),
+        ('NECESSARY_EXAMINATIONS', 'Направлення'),
+        ('DIAGNOSIS', 'Діагноз'),
     )
+
+    title = models.CharField("Назва запису", max_length=255, blank=False, default="-")
 
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='medical_records')
     record_type = models.CharField("Тип запису", max_length=255, choices=RECORD_TYPE_CHOICES, null=False)
 
-    pdf_links = models.CharField("Посилання на PDF-файли", max_length=255, blank=True)
+    pdf_links = ArrayField(
+        models.CharField(max_length=255),
+        blank=True,
+        default=list,
+        verbose_name="Посилання на PDF-файли"
+    )
+
     services = models.ManyToManyField(Service, verbose_name="Необхідні обстеження",
                                       related_name='medical_records', blank=False)
     doctor_conclusion = models.CharField("Висновок лікаря", max_length=255, blank=True)
@@ -75,17 +84,17 @@ class MedicalRecord(models.Model):
 
     class Meta:
         constraints = [
-            # Якщо record_type = 'diagnosis', то doctor_conclusion не може бути NULL
+            # Якщо record_type = 'DIAGNOSIS', то doctor_conclusion не може бути NULL
             CheckConstraint(
-                check=Q(record_type='diagnosis') & ~Q(doctor_conclusion=None) |
-                      ~Q(record_type='diagnosis'),
+                check=Q(record_type='DIAGNOSIS') & ~Q(doctor_conclusion=None) |
+                      ~Q(record_type='DIAGNOSIS'),
                 name='check_diagnosis_doctor_conclusion'
             ),
 
-            # Якщо record_type = 'analysis', то pdf_links не може бути NULL
+            # Якщо record_type = 'ANALYSIS_RESULTS', то pdf_links не може бути NULL
             CheckConstraint(
-                check=Q(record_type='analysis') & ~Q(pdf_links=None) |
-                      ~Q(record_type='analysis'),
+                check=Q(record_type='ANALYSIS_RESULTS') & ~Q(pdf_links=None) |
+                      ~Q(record_type='ANALYSIS_RESULTS'),
                 name='check_analysis_pdf_links'
             ),
         ]

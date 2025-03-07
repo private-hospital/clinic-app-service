@@ -30,9 +30,28 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 DEBUG = bool(os.getenv("DEBUG", default=0))
 
 ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "127.0.0.1").split(",")
-CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "http://localhost:8000").split(",")
-print(f"ALLOWED_HOSTS - {ALLOWED_HOSTS}")
-print(f"CSRF_ORIGINS - {CSRF_TRUSTED_ORIGINS}")
+CSRF_TRUSTED_ORIGINS = os.getenv("DJANGO_CSRF_TRUSTED_ORIGINS", "").split(",")
+
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_METHODS = (
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+)
+CORS_ALLOW_HEADERS = (
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+)
 
 CORS_ALLOW_ALL_ORIGINS = True
 
@@ -66,6 +85,12 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
 }
+
+
+CORS_ALLOW_CREDENTIALS = True
+CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SAMESITE = None
+SESSION_COOKIE_SAMESITE = None
 
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
